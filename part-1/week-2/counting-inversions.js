@@ -1,3 +1,10 @@
+import { open } from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // procedure to merge 2 sorted array into 1 sorted array
 function mergeAndCount(arr1, arr2) {
   const mergedArray = []
@@ -61,4 +68,18 @@ function countingInversions(arr) {
   }
 }
 
-console.log(countingInversions([1, 3, 5, 2, 4, 6]))
+async function main() {
+  const fileHandle = await open(path.join(__dirname, './large-array.txt'));
+  const lines = await fileHandle.readLines();
+
+  const originalArray = [];
+  for await (const line of lines) {
+    originalArray.push(parseInt(line));
+  }
+
+  await fileHandle.close();
+
+  return countingInversions(originalArray)
+}
+
+main().then(res => console.log(res))
