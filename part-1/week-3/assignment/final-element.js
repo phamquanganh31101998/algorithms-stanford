@@ -11,7 +11,7 @@ function swap([x, y]) {
 
 // After partition procedure, we got array like this: [<p, p, >p]
 function partition(arr) {
-  // Choose first element as the pivot
+  // Choose last element as the pivot
   const pivot = arr[0]
 
   let i = 1;
