@@ -14,7 +14,10 @@ function partition(arr) {
   // Choose first element as the pivot
   const pivot = arr[0]
 
+  // position that all elements before it are smaller than the pivot
   let i = 1;
+
+  // counter
   let j = 1;
 
   for (j; j < arr.length; j++) {

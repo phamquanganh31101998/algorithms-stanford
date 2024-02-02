@@ -12,29 +12,34 @@ function swap([x, y]) {
 // After partition procedure, we got array like this: [<p, p, >p]
 function partition(arr) {
   // Choose last element as the pivot
-  const pivot = arr[0]
+  const pivot = arr[arr.length - 1];
+  // Move pivot to the top (by creating new arr)
+  const newArr = [pivot, ...arr.slice(0, arr.length - 1)]
 
+  // position that all elements before it are smaller than the pivot
   let i = 1;
+
+  // counter
   let j = 1;
 
-  for (j; j < arr.length; j++) {
+  for (j; j < newArr.length; j++) {
     // Note: no need to check arr[j] > pivot because they are in right position
     if(arr[j] < pivot) {
       // swap arr[j] with arr[i] when arr[j] < pivot (not in right position)
-      const [valueAtJ, valueAtI] = swap([arr[i], arr[j]])
-      arr[i] = valueAtJ
-      arr[j] = valueAtI
+      const [valueAtJ, valueAtI] = swap([newArr[i], newArr[j]])
+      newArr[i] = valueAtJ
+      newArr[j] = valueAtI
       i++
     }
   }
 
   // swap pivot (at first entry) to the element at i - 1 to move pivot to its right place
-  const [valueAtBeforeI, valueAtPivot] = swap([pivot, arr[i - 1]])
-  arr[0] = valueAtBeforeI
-  arr[i-1] = valueAtPivot
+  const [valueAtBeforeI, valueAtPivot] = swap([pivot, newArr[i - 1]])
+  newArr[0] = valueAtBeforeI
+  newArr[i-1] = valueAtPivot
 
   return {
-    partitionedArray: arr,
+    partitionedArray: newArr,
     pivotPosition: i - 1
   }
 }
