@@ -1,0 +1,89 @@
+import { open } from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function swap([x, y]) {
+  return [y, x]
+}
+
+// After partition procedure, we got array like this: [<p, p, >p]
+function partition(arr) {
+  // Choose the median of three (first, middle, last) as the pivot
+  const first = arr[0];
+  const middle = arr[Math.floor((arr.length - 1) / 2)];
+  const last = arr[arr.length - 1]
+  const threeElementsArr = [first, middle, last].sort((a, b) => a - b)
+  const pivot = threeElementsArr[1]
+  const pivotIndex = arr.findIndex(item => item === pivot)
+
+  // Move pivot to the top (by exchanging pivot with first element when creating newArr)
+  const newArr = [...arr]
+  newArr[0] = pivot
+  newArr[pivotIndex] = arr[0]
+
+  // position that all elements before it are smaller than the pivot
+  let i = 1;
+
+  // counter
+  let j = 1;
+
+  for (j; j < newArr.length; j++) {
+    // Note: no need to check arr[j] > pivot because they are in right position
+    if(newArr[j] < pivot) {
+      // swap newArr[j] with newArr[i] when newArr[j] < pivot (not in right position)
+      const [valueAtJ, valueAtI] = swap([newArr[i], newArr[j]])
+      newArr[i] = valueAtJ
+      newArr[j] = valueAtI
+      i++
+    }
+  }
+
+  // swap pivot (at first entry) to the element at i - 1 to move pivot to its right place
+  const [valueAtBeforeI, valueAtPivot] = swap([pivot, newArr[i - 1]])
+  newArr[0] = valueAtBeforeI
+  newArr[i-1] = valueAtPivot
+
+  return {
+    partitionedArray: newArr,
+    pivotPosition: i - 1
+  }
+}
+
+function quickSort(arr) {
+  if (arr.length <= 1) return {
+    sortedArray: arr,
+    totalComparisonCount: 0
+  }
+
+  const { partitionedArray , pivot, pivotPosition} =  partition(arr)
+  const leftPart = partitionedArray.slice(0, pivotPosition)
+  const rightPart = partitionedArray.slice(pivotPosition + 1, arr.length)
+
+  const leftResult = quickSort(leftPart);
+  const rightResult = quickSort(rightPart)
+
+  return {
+    sortedArray: [...leftResult.sortedArray, partitionedArray[pivotPosition], ...rightResult.sortedArray],
+    totalComparisonCount: leftPart.length + rightPart.length + leftResult.totalComparisonCount + rightResult.totalComparisonCount
+  }
+}
+
+async function main() {
+  const fileHandle = await open(path.join(__dirname, './quick-sort-data.txt'));
+
+  const lines = await fileHandle.readLines();
+
+  const originalArray = [];
+  for await (const line of lines) {
+    originalArray.push(parseInt(line));
+  }
+
+  await fileHandle.close();
+
+  return quickSort(originalArray)
+}
+
+main().then(res => console.log(res))
