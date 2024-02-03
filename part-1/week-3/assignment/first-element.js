@@ -63,7 +63,6 @@ function quickSort(arr) {
 
 async function main() {
   const fileHandle = await open(path.join(__dirname, './quick-sort-data.txt'));
-  console.log({__filename, __dirname})
 
   const lines = await fileHandle.readLines();
 

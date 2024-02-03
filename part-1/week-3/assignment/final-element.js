@@ -13,8 +13,11 @@ function swap([x, y]) {
 function partition(arr) {
   // Choose last element as the pivot
   const pivot = arr[arr.length - 1];
-  // Move pivot to the top (by creating new arr)
-  const newArr = [pivot, ...arr.slice(0, arr.length - 1)]
+
+  // Move pivot to the top (by exchanging pivot with first element when creating newArr)
+  const newArr = [...arr]
+  newArr[0] = pivot
+  newArr[newArr.length - 1] = arr[0]
 
   // position that all elements before it are smaller than the pivot
   let i = 1;
@@ -23,9 +26,9 @@ function partition(arr) {
   let j = 1;
 
   for (j; j < newArr.length; j++) {
-    // Note: no need to check arr[j] > pivot because they are in right position
-    if(arr[j] < pivot) {
-      // swap arr[j] with arr[i] when arr[j] < pivot (not in right position)
+    // Note: no need to check newArr[j] > pivot because they are in right position
+    if(newArr[j] < pivot) {
+      // swap newArr[j] with newArr[i] when newArr[j] < pivot (not in right position)
       const [valueAtJ, valueAtI] = swap([newArr[i], newArr[j]])
       newArr[i] = valueAtJ
       newArr[j] = valueAtI
@@ -65,7 +68,6 @@ function quickSort(arr) {
 
 async function main() {
   const fileHandle = await open(path.join(__dirname, './quick-sort-data.txt'));
-  console.log({__filename, __dirname})
 
   const lines = await fileHandle.readLines();
 
